@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CELL-ID"
+        />
+    <EditText android:id="@+id/edit_cellid"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:editable="false"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="LAC"
+        />
+    <EditText android:id="@+id/edit_lac"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:editable="false"
+        />
+
+    <!-- The Buttons next to each other -->
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        >
+        <!-- When the Update button is pressed, will populate edit_cellid and edit_lac fields with
+        the correct information -->
+        <Button android:id="@+id/cmd_update"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:text="Update"
+            />
+        <!-- When the Locate Me! button is pressed, it will use the cell id and lac to locate
+        phone and display this location on a map -->
+        <Button android:id="@+id/cmd_locateme"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:text="Locate Me!">
+            <requestFocus/>
+        </Button>
+    </LinearLayout>
+</LinearLayout>

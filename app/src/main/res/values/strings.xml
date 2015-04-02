@@ -1,0 +1,9 @@
+<resources>
+
+    <string name="app_name">CellLocator</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="cellid">cellid</string>
+    <string name="lac">lac</string>
+
+</resources>
