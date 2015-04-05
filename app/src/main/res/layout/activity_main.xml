@@ -18,17 +18,38 @@
         />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="LAC"
-        />
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="LAC"
+    />
     <EditText android:id="@+id/edit_lac"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:singleLine="true"
         android:editable="false"
         />
-
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="MCC"
+        />
+    <EditText android:id="@+id/edit_mcc"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:editable="false"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="MNC"
+        />
+    <EditText android:id="@+id/edit_mnc"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:editable="false"
+        />
     <!-- The Buttons next to each other -->
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="horizontal"
