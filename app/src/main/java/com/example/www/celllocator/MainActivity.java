@@ -13,8 +13,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -84,6 +82,7 @@ public class MainActivity extends ActionBarActivity {
                     GetOpenCellID();
                 } catch (Exception e) {
                     e.printStackTrace();
+                   //hello
                 }
                 //TODO: Will need to push these values to function in order to get long/lat
 
@@ -91,8 +90,8 @@ public class MainActivity extends ActionBarActivity {
 
                 //TODO: Will need to open map and locate phone using long/lat.
                 //This shows location, but doesn't have a marker/pin
-                final LatLng x;
-                x = new LatLng((double)Integer.parseInt(myLatitude),Integer.parseInt(myLongitude));
+                //final LatLng x;
+                //x = new LatLng((double)Integer.parseInt(myLatitude),Integer.parseInt(myLongitude));
                 String map = String.format(Locale.ENGLISH, "geo:%f,%f", myLatitude, myLongitude);
 
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(map));
