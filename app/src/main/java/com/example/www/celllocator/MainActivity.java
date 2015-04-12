@@ -79,6 +79,7 @@ public class MainActivity extends ActionBarActivity {
 
 
     }
+    //just to push
     public void sendMessage(View view) {
 
             Connect con =new Connect();
