@@ -2,16 +2,20 @@ package com.example.www.celllocator;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.v7.app.ActionBarActivity;
 import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
+import com.google.android.gms.maps.model.LatLng;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -19,10 +23,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
-import java.util.Locale;
-
 public class MainActivity extends ActionBarActivity {
-
+    public static final String TAG = "MYTAG";
     EditText id, lac,mnc,mcc;
     Button update, locate;
     String cellmcc,cellmnc;  //Mobile Country Code
@@ -34,10 +36,13 @@ public class MainActivity extends ActionBarActivity {
 
     String myLatitude, myLongitude;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+        protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        if (android.os.Build.VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
         id = (EditText) findViewById(R.id.edit_cellid);
         lac = (EditText) findViewById(R.id.edit_lac);
         mcc = (EditText) findViewById(R.id.edit_mcc);
@@ -61,8 +66,8 @@ public class MainActivity extends ActionBarActivity {
                 if (telephony.getPhoneType() == TelephonyManager.PHONE_TYPE_GSM) {
                     final GsmCellLocation location = (GsmCellLocation) telephony.getCellLocation();
                     if (location != null) {
-                        cellid = Integer.toString(location.getLac());
-                        celllac = Integer.toString(location.getCid());
+                        celllac = String.valueOf(location.getLac());
+                        cellid = String.valueOf(location.getCid());
                     }
                 }
                 id.setText(cellid);
@@ -72,66 +77,57 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
-        //Use CELL_ID and LAC to obtain longitude and latitude values. Will use these values to
-        //locate physical location of phone
-        locate.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
 
-                Double longitude, latitude;
-                try {
-                    GetOpenCellID();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                   //hello
-                }
-                //TODO: Will need to push these values to function in order to get long/lat
+    }
+    public void sendMessage(View view) {
 
-                //Used only so app runs
+            Connect con =new Connect();
+            con.doInBackground();
+        double l1=Double.parseDouble(myLatitude);
+        double l2=Double.parseDouble(myLongitude);
+        Log.v(TAG, "here"+myLatitude);
+        //Log.v(TAG, myLatitude);
+        LatLng x = new LatLng(l1,l2);
+        Bundle args = new Bundle();
+        args.putParcelable("x", x);
+        Intent intent = new Intent(this, MapsActivity.class);
+        intent.putExtra("bundle", args);
+        startActivity(intent);
+    }
 
-                //TODO: Will need to open map and locate phone using long/lat.
-                //This shows location, but doesn't have a marker/pin
-                //final LatLng x;
-                //x = new LatLng((double)Integer.parseInt(myLatitude),Integer.parseInt(myLongitude));
-                String map = String.format(Locale.ENGLISH, "geo:%f,%f", myLatitude, myLongitude);
+    private class Connect extends AsyncTask<String, Void, String> {
+        public String getGetOpenCellID_fullresult() {
+            return GetOpenCellID_fullresult;
+        }
+        @Override
+        protected String doInBackground(String... params) {
 
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(map));
-                startActivity(intent);
+            //INSERT YOUR FUNCTION CALL HERE
+            try {
+                /*                strURLSent =
+                        "http://www.opencellid.org/cell/get?mcc=" + cellmcc
+                                + "&mnc=" + cellmnc
+                                + "&cellid=" + cellid
+                                + "&lac=" + celllac
+                                + "&key=190eb219-14b5-4651-a6f0-d106e78f3298"
+                                + "&fmt=txt";*/
+                strURLSent="http://www.open-electronics.org/celltrack/cell.php?hex=0&mcc="+cellmcc+"&mnc="+cellmnc+"&lac="+celllac+"&cid="+cellid+"&lac0=&cid0=&lac1=&cid1=&lac2=&cid2=&lac3=&cid3=&lac4=&cid4=";
+                HttpClient client = new DefaultHttpClient();
+                HttpGet request = new HttpGet(strURLSent);
+                HttpResponse response = client.execute(request);
+                Log.v(TAG, "inside cellid");
+                GetOpenCellID_fullresult = EntityUtils.toString(response.getEntity());
+                myLatitude= GetOpenCellID_fullresult.substring(GetOpenCellID_fullresult.lastIndexOf("Cell<br>Lat=")+12,GetOpenCellID_fullresult.lastIndexOf(" <br> Lon="));
+                myLongitude = GetOpenCellID_fullresult.substring(GetOpenCellID_fullresult.lastIndexOf(" <br> Lon=")+10,GetOpenCellID_fullresult.lastIndexOf(" <br> Range="));
 
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+            return "Executed!";
 
-        });
-    }
-    public String getGetOpenCellID_fullresult(){
-        return GetOpenCellID_fullresult;
-    }
-    public void GetOpenCellID() throws Exception {
-        groupURLSent();
-        HttpClient client = new DefaultHttpClient();
-        HttpGet request = new HttpGet(strURLSent);
-        HttpResponse response = client.execute(request);
-        GetOpenCellID_fullresult = EntityUtils.toString(response.getEntity());
-        spliteResult();
-    }
-    public void groupURLSent(){
-        strURLSent =
-                "http://www.opencellid.org/cell/get?mcc=" + mcc
-                        +"&mnc=" + mnc
-                        +"&cellid=" + cellid
-                        +"&lac=" + lac
-                        +"&fmt=txt";
-    }
-    private void spliteResult(){
-        if(GetOpenCellID_fullresult.equalsIgnoreCase("err")){
-            error = true;
-        }else{
-            error = false;
-            String[] tResult = GetOpenCellID_fullresult.split(",");
-            myLatitude = tResult[0];
-            myLongitude = tResult[1];
         }
 
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

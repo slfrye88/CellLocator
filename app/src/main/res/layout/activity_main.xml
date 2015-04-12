@@ -68,7 +68,8 @@
         <Button android:id="@+id/cmd_locateme"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
-            android:text="Locate Me!">
+            android:text="Locate Me!"
+            android:onClick="sendMessage">
             <requestFocus/>
         </Button>
     </LinearLayout>
