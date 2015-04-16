@@ -17,12 +17,6 @@ import android.widget.EditText;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -41,7 +35,7 @@ public class MainActivity extends ActionBarActivity {
 
     String myLatitude, myLongitude;
     @Override
-        protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if (android.os.Build.VERSION.SDK_INT > 9) {
@@ -106,24 +100,24 @@ public class MainActivity extends ActionBarActivity {
         protected String doInBackground(String... params) {
 
             //INSERT YOUR FUNCTION CALL HERE
-           try {
+            try {
                 strURLSent = new URL("http://www.open-electronics.org/celltrack/cell.php?hex=0&mcc="+cellmcc+"&mnc="+cellmnc+"&lac="+celllac+"&cid="+cellid+"&lac0=&cid0=&lac1=&cid1=&lac2=&cid2=&lac3=&cid3=&lac4=&cid4=");
-               HttpURLConnection urlConnection = (HttpURLConnection) strURLSent.openConnection();
+                HttpURLConnection urlConnection = (HttpURLConnection) strURLSent.openConnection();
 
-               InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-               int ch;
-               StringBuffer sb = new StringBuffer();
-               while ((ch = in.read()) != -1) {
-                   sb.append((char) ch);
-               }
-               String response = sb.toString();
+                InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+                int ch;
+                StringBuffer sb = new StringBuffer();
+                while ((ch = in.read()) != -1) {
+                    sb.append((char) ch);
+                }
+                String response = sb.toString();
 
-               Log.v(TAG, "inside cellid");
-               GetOpenCellID_fullresult = response;
-               myLatitude= GetOpenCellID_fullresult.substring(GetOpenCellID_fullresult.lastIndexOf("Cell<br>Lat=")+12,GetOpenCellID_fullresult.lastIndexOf(" <br> Lon="));
-               myLongitude = GetOpenCellID_fullresult.substring(GetOpenCellID_fullresult.lastIndexOf(" <br> Lon=")+10,GetOpenCellID_fullresult.lastIndexOf(" <br> Range="));
+                Log.v(TAG, "inside cellid");
+                GetOpenCellID_fullresult = response;
+                myLatitude= GetOpenCellID_fullresult.substring(GetOpenCellID_fullresult.lastIndexOf("Cell<br>Lat=")+12,GetOpenCellID_fullresult.lastIndexOf(" <br> Lon="));
+                myLongitude = GetOpenCellID_fullresult.substring(GetOpenCellID_fullresult.lastIndexOf(" <br> Lon=")+10,GetOpenCellID_fullresult.lastIndexOf(" <br> Range="));
 
-               urlConnection.disconnect();
+                urlConnection.disconnect();
 
 
             } catch (Exception e) {
