@@ -23,6 +23,11 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
+import java.io.BufferedInputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 public class MainActivity extends ActionBarActivity {
     public static final String TAG = "MYTAG";
     EditText id, lac,mnc,mcc;
@@ -31,7 +36,7 @@ public class MainActivity extends ActionBarActivity {
     String cellid,celllac; //Cell ID
 
     Boolean error;
-    String strURLSent;
+    URL strURLSent;
     String GetOpenCellID_fullresult;
 
     String myLatitude, myLongitude;
@@ -53,9 +58,6 @@ public class MainActivity extends ActionBarActivity {
         //Set CELL_ID and LAC fields to their respective values
         update.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
-                //TODO: Will need to call function that gets these values
-                //Used on so app will run
 
                 TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
                 GsmCellLocation cellLocation = (GsmCellLocation) telephonyManager.getCellLocation();
@@ -82,10 +84,10 @@ public class MainActivity extends ActionBarActivity {
     //just to push
     public void sendMessage(View view) {
 
-            Connect con =new Connect();
-            con.doInBackground();
-        double l1=Double.parseDouble(myLatitude);
-        double l2=Double.parseDouble(myLongitude);
+        Connect con = new Connect();
+        con.doInBackground();
+        double l1 = Double.parseDouble(myLatitude);
+        double l2 = Double.parseDouble(myLongitude);
         Log.v(TAG, "here"+myLatitude);
         //Log.v(TAG, myLatitude);
         LatLng x = new LatLng(l1,l2);
@@ -104,22 +106,25 @@ public class MainActivity extends ActionBarActivity {
         protected String doInBackground(String... params) {
 
             //INSERT YOUR FUNCTION CALL HERE
-            try {
-                /*                strURLSent =
-                        "http://www.opencellid.org/cell/get?mcc=" + cellmcc
-                                + "&mnc=" + cellmnc
-                                + "&cellid=" + cellid
-                                + "&lac=" + celllac
-                                + "&key=190eb219-14b5-4651-a6f0-d106e78f3298"
-                                + "&fmt=txt";*/
-                strURLSent="http://www.open-electronics.org/celltrack/cell.php?hex=0&mcc="+cellmcc+"&mnc="+cellmnc+"&lac="+celllac+"&cid="+cellid+"&lac0=&cid0=&lac1=&cid1=&lac2=&cid2=&lac3=&cid3=&lac4=&cid4=";
-                HttpClient client = new DefaultHttpClient();
-                HttpGet request = new HttpGet(strURLSent);
-                HttpResponse response = client.execute(request);
-                Log.v(TAG, "inside cellid");
-                GetOpenCellID_fullresult = EntityUtils.toString(response.getEntity());
-                myLatitude= GetOpenCellID_fullresult.substring(GetOpenCellID_fullresult.lastIndexOf("Cell<br>Lat=")+12,GetOpenCellID_fullresult.lastIndexOf(" <br> Lon="));
-                myLongitude = GetOpenCellID_fullresult.substring(GetOpenCellID_fullresult.lastIndexOf(" <br> Lon=")+10,GetOpenCellID_fullresult.lastIndexOf(" <br> Range="));
+           try {
+                strURLSent = new URL("http://www.open-electronics.org/celltrack/cell.php?hex=0&mcc="+cellmcc+"&mnc="+cellmnc+"&lac="+celllac+"&cid="+cellid+"&lac0=&cid0=&lac1=&cid1=&lac2=&cid2=&lac3=&cid3=&lac4=&cid4=");
+               HttpURLConnection urlConnection = (HttpURLConnection) strURLSent.openConnection();
+
+               InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+               int ch;
+               StringBuffer sb = new StringBuffer();
+               while ((ch = in.read()) != -1) {
+                   sb.append((char) ch);
+               }
+               String response = sb.toString();
+
+               Log.v(TAG, "inside cellid");
+               GetOpenCellID_fullresult = response;
+               myLatitude= GetOpenCellID_fullresult.substring(GetOpenCellID_fullresult.lastIndexOf("Cell<br>Lat=")+12,GetOpenCellID_fullresult.lastIndexOf(" <br> Lon="));
+               myLongitude = GetOpenCellID_fullresult.substring(GetOpenCellID_fullresult.lastIndexOf(" <br> Lon=")+10,GetOpenCellID_fullresult.lastIndexOf(" <br> Range="));
+
+               urlConnection.disconnect();
+
 
             } catch (Exception e) {
                 e.printStackTrace();
