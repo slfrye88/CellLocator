@@ -6,5 +6,7 @@
     <string name="cellid">cellid</string>
     <string name="lac">lac</string>
     <string name="title_activity_maps">Map</string>
+    <string name="none_found">none found</string>
+    <string name="none_paired">none paired</string>
 
 </resources>
