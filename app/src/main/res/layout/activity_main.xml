@@ -66,10 +66,17 @@
         <!-- When the Locate Me! button is pressed, it will use the cell id and lac to locate
         phone and display this location on a map -->
         <Button android:id="@+id/cmd_locateme"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:text="celltower!"
+        android:onClick="sendMessage">
+        <requestFocus/>
+    </Button>
+        <Button android:id="@+id/cmd_wifi"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
-            android:text="Locate Me!"
-            android:onClick="sendMessage">
+            android:text="wifi!"
+            android:onClick="sendMessage1">
             <requestFocus/>
         </Button>
     </LinearLayout>

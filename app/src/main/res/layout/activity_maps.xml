@@ -18,5 +18,6 @@
         android:layout_height="wrap_content"
         android:text="check"
         android:onClick="sendMessage"/>
+
 </RelativeLayout>
 
