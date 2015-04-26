@@ -117,8 +117,8 @@ public class BluetoothChat extends Activity {
         mConversationView = (ListView) findViewById(R.id.in);
         mConversationView.setAdapter(mConversationArrayAdapter);
         // Initialize the compose field with a listener for the return key
-        mOutEditText = (EditText) findViewById(R.id.edit_text_out);
-        mOutEditText.setOnEditorActionListener(mWriteListener);
+       // mOutEditText = (EditText) findViewById(R.id.edit_text_out);
+       // mOutEditText.setOnEditorActionListener(mWriteListener);
         // Initialize the send button with a listener that for click events
         mSendButton = (Button) findViewById(R.id.button_send);
         mFindButton = (Button) findViewById(R.id.button_find);
@@ -191,7 +191,7 @@ public class BluetoothChat extends Activity {
             mChatService.write(send);
             // Reset out string buffer to zero and clear the edit text field
             mOutStringBuffer.setLength(0);
-            mOutEditText.setText(mOutStringBuffer);
+            //mOutEditText.setText(mOutStringBuffer);
         }
     }
     // The action listener for the EditText widget, to listen for the return key

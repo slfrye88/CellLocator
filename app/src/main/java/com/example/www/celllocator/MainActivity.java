@@ -15,6 +15,7 @@ import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -91,19 +92,27 @@ public class MainActivity extends ActionBarActivity {
     }
     //just to push
     public void sendMessage(View view) throws IOException {
+        if(cellmcc!=null && cellmnc!=null && celllac !=null && cellid !=null ) {
+            Connect con = new Connect();
+            con.doInBackground();
+            double l1 = Double.parseDouble(myLatitude);
+            double l2 = Double.parseDouble(myLongitude);
+            Log.v(TAG, "here" + myLatitude);
+            //Log.v(TAG, myLatitude);
+            LatLng x = new LatLng(l1, l2);
+            Bundle args = new Bundle();
+            args.putParcelable("x", x);
+            Intent intent = new Intent(this, MapsActivity.class);
+            intent.putExtra("bundle", args);
+            startActivity(intent);
+        }
+        else
+        {
+            Toast.makeText(getApplicationContext(), "click on update button",
+                    Toast.LENGTH_LONG).show();
 
-        Connect con = new Connect();
-        con.doInBackground();
-        double l1 = Double.parseDouble(myLatitude);
-        double l2 = Double.parseDouble(myLongitude);
-        Log.v(TAG, "here"+myLatitude);
-        //Log.v(TAG, myLatitude);
-        LatLng x = new LatLng(l1,l2);
-        Bundle args = new Bundle();
-        args.putParcelable("x", x);
-        Intent intent = new Intent(this, MapsActivity.class);
-        intent.putExtra("bundle", args);
-        startActivity(intent);
+        }
+
     }
 
     private class Connect extends AsyncTask<String, Void, String> {
@@ -114,29 +123,32 @@ public class MainActivity extends ActionBarActivity {
         protected String doInBackground(String... params) {
 
             //INSERT YOUR FUNCTION CALL HERE
-            try {
-                strURLSent = new URL("http://www.open-electronics.org/celltrack/cell.php?hex=0&mcc="+cellmcc+"&mnc="+cellmnc+"&lac="+celllac+"&cid="+cellid+"&lac0=&cid0=&lac1=&cid1=&lac2=&cid2=&lac3=&cid3=&lac4=&cid4=");
-                HttpURLConnection urlConnection = (HttpURLConnection) strURLSent.openConnection();
 
-                InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-                int ch;
-                StringBuffer sb = new StringBuffer();
-                while ((ch = in.read()) != -1) {
-                    sb.append((char) ch);
+                try {
+                    strURLSent = new URL("http://www.open-electronics.org/celltrack/cell.php?hex=0&mcc=" + cellmcc + "&mnc=" + cellmnc + "&lac=" + celllac + "&cid=" + cellid + "&lac0=&cid0=&lac1=&cid1=&lac2=&cid2=&lac3=&cid3=&lac4=&cid4=");
+                    HttpURLConnection urlConnection = (HttpURLConnection) strURLSent.openConnection();
+
+                    InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+                    int ch;
+                    StringBuffer sb = new StringBuffer();
+                    while ((ch = in.read()) != -1) {
+                        sb.append((char) ch);
+                    }
+                    String response = sb.toString();
+
+                    Log.v(TAG, "inside cellid");
+                    GetOpenCellID_fullresult = response;
+                    myLatitude = GetOpenCellID_fullresult.substring(GetOpenCellID_fullresult.lastIndexOf("Cell<br>Lat=") + 12, GetOpenCellID_fullresult.lastIndexOf(" <br> Lon="));
+                    myLongitude = GetOpenCellID_fullresult.substring(GetOpenCellID_fullresult.lastIndexOf(" <br> Lon=") + 10, GetOpenCellID_fullresult.lastIndexOf(" <br> Range="));
+
+                    urlConnection.disconnect();
+
+
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                String response = sb.toString();
-
-                Log.v(TAG, "inside cellid");
-                GetOpenCellID_fullresult = response;
-                myLatitude= GetOpenCellID_fullresult.substring(GetOpenCellID_fullresult.lastIndexOf("Cell<br>Lat=")+12,GetOpenCellID_fullresult.lastIndexOf(" <br> Lon="));
-                myLongitude = GetOpenCellID_fullresult.substring(GetOpenCellID_fullresult.lastIndexOf(" <br> Lon=")+10,GetOpenCellID_fullresult.lastIndexOf(" <br> Range="));
-
-                urlConnection.disconnect();
 
 
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
             return "Executed!";
 
         }
@@ -144,36 +156,36 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void sendMessage1(View view) throws IOException {
+        if(cellmcc!=null && cellmnc!=null && celllac !=null && cellid !=null ) {
+            Connect1 con = new Connect1();
+            con.doInBackground();
+            URL link = new URL("http://freegeoip.net/csv/" + con.Ip);
 
-        Connect1 con=new Connect1();
-        con.doInBackground();
-        URL link = new URL("http://freegeoip.net/csv/"+con.Ip);
+            HttpURLConnection connection = (HttpURLConnection) link.openConnection();
+            connection.connect();
 
-        HttpURLConnection connection = (HttpURLConnection) link.openConnection();
-        connection.connect();
+            InputStream is = connection.getInputStream();
 
-        InputStream is = connection.getInputStream();
+            int status = connection.getResponseCode();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            String latlong = null;
+            String line = reader.readLine();
+            String[] fields = line.split(",");
 
-        int status = connection.getResponseCode();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-        String latlong=null;
-        String line = reader.readLine();
-        String[] fields=line.split(",");
-
-        myLatitude=fields[8];
-        myLongitude=fields[9];
-        Log.v("latitude",myLatitude);
-        Log.v("longitude",myLongitude);
-        double l1 = Double.parseDouble(myLatitude);
-        double l2 = Double.parseDouble(myLongitude);
-        Log.v(TAG, "here"+myLatitude);
-        //Log.v(TAG, myLatitude);
-        LatLng x = new LatLng(l1,l2);
-        Bundle args = new Bundle();
-        args.putParcelable("x", x);
-        Intent intent = new Intent(this, MapsActivity.class);
-        intent.putExtra("bundle", args);
-        startActivity(intent);
+            myLatitude = fields[8];
+            myLongitude = fields[9];
+            Log.v("latitude", myLatitude);
+            Log.v("longitude", myLongitude);
+            double l1 = Double.parseDouble(myLatitude);
+            double l2 = Double.parseDouble(myLongitude);
+            Log.v(TAG, "here" + myLatitude);
+            //Log.v(TAG, myLatitude);
+            LatLng x = new LatLng(l1, l2);
+            Bundle args = new Bundle();
+            args.putParcelable("x", x);
+            Intent intent = new Intent(this, MapsActivity.class);
+            intent.putExtra("bundle", args);
+            startActivity(intent);
           /*  int index = nthOccurrence(line, ',', 7);
             latlong=line.substring(index+1);
 
@@ -182,6 +194,13 @@ public class MainActivity extends ActionBarActivity {
         int latind=nthOccurrence(latlong,',',1);
         myLatitude=latlong.substring(0,latind);
         myLongitude=latlong.substring(latind+1);*/
+        }
+        else
+        {
+            Toast.makeText(getApplicationContext(), "click on update button",
+                    Toast.LENGTH_LONG).show();
+
+        }
     }
 
     private class Connect1 extends AsyncTask<String, Void, String> {
